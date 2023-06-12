@@ -308,8 +308,8 @@ function update_pids()
 		} )
 	.done(function(resp) {
 		console.log( "getpids", "success", resp );
-		if(resp.pids.bridge != null) {
-			$("#bridgestate").attr("style", "color:green").html("<TMPL_VAR COMMON.MSG_BRIDGE_RUNNING> (PID "+resp.pids.bridge+")");
+		if(resp.pids.bridge != null && resp.pids.server != null) {
+			$("#bridgestate").attr("style", "color:green").html("<TMPL_VAR COMMON.MSG_BRIDGE_RUNNING> (Bridge PID "+resp.pids.bridge+" / Server PID "+resp.pids.server+")");
 		} else {
 			$("#bridgestate").attr("style", "color:red").html("<TMPL_VAR COMMON.MSG_BRIDGE_NOTRUNNING>");
 		}

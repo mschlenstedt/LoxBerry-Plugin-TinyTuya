@@ -103,6 +103,19 @@ sub start
 
 	LOGINF "START called...";
 	LOGINF "Starting Bridge...";
+
+	# Create mqtt.json for mqtt_gateway of TinyTuya
+	my $cfgfile = $lbpconfigdir . "/mqtt.json";
+	my $jsonobj = LoxBerry::JSON->new();
+	my $cfg = $jsonobj->open(filename => $cfgfile);
+	my $mqttcred = LoxBerry::IO::mqtt_connectiondetails();
+	$cfg->{broker} = $mqttcred->{brokerhost};
+	$cfg->{port} = $mqttcred->{brokerport};
+	$cfg->{username} = $mqttcred->{brokeruser};
+	$cfg->{password} = $mqttcred->{brokerpass};
+	$jsonobj->write();
+	execute( "chmod 0600 $lbpconfigdir/mqtt.json" );
+
 	# Logging for Bridge
 	# Create a logging object
 	my $logtwo = LoxBerry::Log->new (  name => "bridge",
@@ -128,9 +141,9 @@ sub start
 	system ("pkill -f $lbpdatadir/server/mqtt/mqtt_gateway.py");
 	system ("pkill -f $lbpdatadir/server/server.py");
 	sleep 2;
-	system ("cd $lbpdatadir/server && python3 server.py > $webserverlogfile $loglevel 2>&1 &");
+	system ("cd $lbpdatadir/server && python3 $lbpdatadir/server/server.py $loglevel >> $webserverlogfile 2>&1 &");
 	sleep 2;
-	system ("cd $lbpdatadir/server/mqtt && python3 mqtt_gateway.py > $bridgelogfile $loglevel 2>&1 &");
+	system ("cd $lbpdatadir/server/mqtt && python3 $lbpdatadir/server/mqtt/mqtt_gateway.py $loglevel >> $bridgelogfile 2>&1 &");
 
 	LOGOK "Done.";
 

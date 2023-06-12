@@ -350,7 +350,8 @@ sub savetinytuya
 
 sub pids
 {
-	$pids{'bridge'} = trim(`pgrep -f $lbpbindir/bridge.py`) ;
+	$pids{'bridge'} = trim(`pgrep -f $lbpdatadir/server/mqtt/mqtt_gateway.py`) ;
+	$pids{'server'} = trim(`pgrep -f $lbpdatadir/server/server.py`) ;
 	return();
 }
 
