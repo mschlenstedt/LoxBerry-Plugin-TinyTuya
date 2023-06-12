@@ -1,0 +1,583 @@
+<!-- SecurePIN --> 
+<div id="securepin_block" style="margin: 0 auto; width:350px; display:none">
+	<TMPL_VAR SECUREPIN.ENTER_SECUREPIN>
+	<input name="securepin" id="securepin" type="text">
+	<button class="ui-btn ui-btn-icon-right ui-corner-all" id="check_securepin" data-inline="true"><TMPL_VAR COMMON.BUTTON_OK></button>
+	
+	<div class="hint" id="check_hint" style="padding: 5px 5px 5px 5px;"></div>
+	<br>
+	<div class="path" style="background: #FF8080; font-color: black; text-shadow: none; border: black 1px solid; padding: 5px;">
+		<p style="font-weight: bold;">
+			<TMPL_VAR SECUREPIN.WARNING_TITLE>
+		</p>
+		<hr>
+		<p>
+			<TMPL_VAR SECUREPIN.PREVENT_SPY>
+		</p>
+	</div>
+</div>
+
+<!-- ****************************************************************************************** -->
+
+<style>
+	.listtable td
+	{
+		vertical-align	:middle;
+		text-align	:center;
+	}
+	.listtable td img
+	{
+		padding		:5px;
+	}
+	.lb_flex-item 
+	{	
+		min-width	:450px;
+		width		:450px;
+		max-width	:450px;
+		flex-wrap	:nowrap;
+		margin-top	:-10px;  
+	}
+	.lb_flex-item-help 
+	{
+		min-width	:100px;
+		width		:100%;
+		position	:relative;
+		margin-left	:10px;
+	}
+	.mqtttable {
+		vertical-align: middle;
+		text-align: left;
+		/* font-size: 90%; */
+		border-collapse: collapse;
+		border: 1px solid grey;
+		padding: 10px;
+		width: 100%;
+		
+	}
+	.mqtttable_vicol, .mqtttable_desccol {
+		border: 1px solid grey;
+		padding: 10px;
+	}
+	.mqtttable_headrow {
+	
+	}
+
+</style>
+
+	<div id="main" style="visibility:hidden"> <!-- style="display:none;" --> 
+
+		<center>
+		<div style="display:flex;align-items:center;justify-content:center;width:100%">
+			<center>
+			<span id="bridgestate"></span>
+			&nbsp; &nbsp; &nbsp; &nbsp;
+			<a href="javascript:restartBridge();" id="btnrestartbridge" data-role="button" data-inline="true" data-icon="refresh" data-mini="true"
+						data-transition="flow"><TMPL_VAR COMMON.BUTTON_RESTART></a>
+			<a href="javascript:stopBridge();" id="btnrestopbridge" data-role="button" data-inline="true" data-icon="delete" data-mini="true"
+						data-transition="flow"><TMPL_VAR COMMON.BUTTON_STOP></a>
+			</center>
+		</div>
+		</center>
+		<hr>
+		<br>
+
+<!-- ****************************************************************************************** -->
+
+<TMPL_IF FORM_TINYTUYA>
+		<form>
+		
+		<div class="lb_flex-container TINYTUYA ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="apiKey"><TMPL_VAR TINYTUYA.LABEL_APIKEY></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<input width="100%" value="" id="apiKey" name="apiKey" type="text" class="textfield">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_APIKEY>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div class="lb_flex-container TINYTUYA ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="apiSecret"><TMPL_VAR TINYTUYA.LABEL_APISECRET></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<input width="100%" value="" id="apiSecret" name="apiSecret" type="text" class="textfield">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_APISECRET>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div class="lb_flex-container TINYTUYA ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="apiDeviceID"><TMPL_VAR TINYTUYA.LABEL_DEVICEID></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<input width="100%" value="" id="apiDeviceID" name="apiDeviceID" type="text" class="textfield">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_DEVICEID>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div class="lb_flex-container TINYTUYA ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="apiRegion"><TMPL_VAR TINYTUYA.LABEL_APIREGION></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<select name="apiRegion" id="apiRegion">
+					<option value="eu">Central Europe Data Center</option>
+					<option value="eu-w">Western Europe Data Center</option>
+					<option value="cn">China Data Center</option>
+					<option value="us">US - Western America Data Center</option>
+					<option value="us-e">US - Eastern America Data Center</option>
+					<option value="in">India Data Center</option>
+				</select>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_APIREGION>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div class="lb_flex-container TINYTUYA ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="type"><TMPL_VAR TINYTUYA.LABEL_TYPE></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<select name="typr" id="type">
+					<option value="silverline"><TMPL_VAR TINYTUYA.LABEL_SILVERLINE></option>
+					<option value="qline"><TMPL_VAR TINYTUYA.LABEL_QLINE></option>
+					<option value="vertigo"><TMPL_VAR TINYTUYA.LABEL_VERTIGO></option>
+					<option value="fairland"><TMPL_VAR TINYTUYA.LABEL_FAIRLAND></option>
+				</select>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_TYPE>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div style="padding: 0px 0px 20px 0px;"></div>
+	
+		<div class="lb_flex-container TINYTUYA">
+			<div	class="lb_flex-item-label">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+			<a href="javascript:saveTINYTUYA();" id="btnsavetinytuya" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" 
+					data-transition="flow" data-inline="true"><TMPL_VAR TINYTUYA.BUTTON_SAVE></a>
+			<div class="hint" id="tinytuya_hint">&nbsp;</div>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+		
+		</form>
+	
+	</div>
+
+</TMPL_IF>
+
+<!-- ****************************************************************************************** -->
+
+<TMPL_IF FORM_MQTT>
+		<form>
+		
+		<div class="lb_flex-container MQTT">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="topic"><TMPL_VAR MQTT.LABEL_MQTTTopic></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<input width="100%" value="" id="topic" name="topic" type="text" class="textfield" 
+				data-validation-rule="^(?!.*//.*)[^\+#]+$" data-validation-error-msg="<TMPL_VAR MQTT.MSG_VALINVALID_MQTTTOPIC>">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR MQTT.HINT_MQTTTOPIC>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+	
+	
+		<div style="padding: 0px 0px 20px 0px;"></div>
+	
+		<div class="lb_flex-container MQTT">
+			<div	class="lb_flex-item-label">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+			<a href="javascript:saveMQTT();" id="btnsavemqtt" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check" 
+						data-transition="flow"><TMPL_VAR MQTT.BUTTON_SAVE></a>
+			<div class="hint" id="mqtt_hint">&nbsp;</div>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+		
+		</form>
+	
+		<script>
+			// Validation
+			validate_enable('#topic');
+		</script>
+	
+	</div>
+
+</TMPL_IF>
+
+<!-- ****************************************************************************************** -->
+
+<TMPL_IF FORM_LOG>
+	<TMPL_VAR LOGLIST>
+</TMPL_IF>
+
+<!-- ****************************************************************************************** -->
+
+<script>
+// Main form
+var formmqtt = '<TMPL_VAR FORM_MQTT>';
+var formtinytuya = '<TMPL_VAR FORM_TINYTUYA>';
+var formlog = '<TMPL_VAR FORM_LOG>';
+
+var secpin = null;
+
+var nopidrefresh = "0";
+
+$(function() {
+	
+	if(secpin == null) {
+		console.log("Getting SecurePIN from session storage");
+		secpin = sessionStorage.getItem("securePIN");
+	}
+	if(secpin == null) {
+		console.log("SecurePIN is empty in session storage");
+		securePINwrong();
+	}
+
+	setInterval(function(){ update_pids(); }, 3000);
+	update_pids();
+
+	getconfig();
+	
+	// Check SecurePIN by ajax and load form data
+	$("#check_securepin").click(function(){
+		console.log("Check securepin called");
+		checkSecurePIN();
+	});
+
+});
+
+// Update PIDs
+function update_pids()
+{
+
+	if (nopidrefresh === "1") {
+		return;
+	}
+
+	$.ajax( {
+		type: 'POST',
+			data: {
+				ajax: 'getpids',
+				secpin: secpin
+			}
+		} )
+	.done(function(resp) {
+		console.log( "getpids", "success", resp );
+		if(resp.pids.bridge != null) {
+			$("#bridgestate").attr("style", "color:green").html("<TMPL_VAR COMMON.MSG_BRIDGE_RUNNING> (PID "+resp.pids.bridge+")");
+		} else {
+			$("#bridgestate").attr("style", "color:red").html("<TMPL_VAR COMMON.MSG_BRIDGE_NOTRUNNING>");
+		}
+	})
+	.fail(function(resp) {
+		$("#bridgestate").attr("style", "color:red").html("<TMPL_VAR COMMON.MSG_FAILED_PID>");
+	})
+	.always(function(resp) {
+		console.log( "getpids", "finished", resp );
+	});
+
+}
+
+// Save MQTT Settings
+function saveMQTT() {
+	$("#mqtt_hint").attr("style", "color:blue").html("<TMPL_VAR MQTT.HINT_SAVE_SAVING>");
+	console.log ("Saving");
+	$.ajax( { 
+			type: 'POST',
+			data: { 
+				ajax: 'savemqtt', 
+				topic: $('#topic').val(),
+				secpin: secpin
+			}
+		} )
+	.fail(function( data ) {
+		console.log( "savemqtt Fail", data );
+		$("#mqtt_hint").attr("style", "color:red").html("<TMPL_VAR MQTT.HINT_SAVE_ERROR>: "+data.statusText);
+	})
+	.done(function( data ) {
+		console.log( "savemqtt Success: ", data );
+		if(data.secpinerror) {
+			securePINwrong();
+			return;
+		}
+		$("#mqtt_hint").attr("style", "color:green").html("<TMPL_VAR MQTT.HINT_SAVE_OK>");
+		getconfig();
+	})
+	.always(function( data ) {
+		console.log( "savemqtt Finished" );
+	});
+}
+
+// Save TinyTuya Settings
+function saveTINYTUYA() {
+	$("#tinytuya_hint").attr("style", "color:blue").html("<TMPL_VAR TINYTUYA.HINT_SAVE_SAVING>");
+	$.ajax( { 
+			type: 'POST',
+			data: { 
+				ajax: 'savetinytuya', 
+				apiKey: $('#apiKey').val(),
+				apiSecret: $('#apiSecret').val(),
+				apiRegion: $('#apiRegion').val(),
+				apiDeviceID: $('#apiDeviceID').val(),
+				type: $('#type').val(),
+				secpin: secpin
+			}
+		} )
+	.fail(function( data ) {
+		console.log( "savetinytuya Fail", data );
+		$("#tinytuya_hint").attr("style", "color:red").html("<TMPL_VAR TINYTUYA.HINT_SAVE_ERROR>: "+data.statusText);
+	})
+	.done(function( data ) {
+		console.log( "savetinytuya Success: ", data );
+		if(data.secpinerror) {
+			securePINwrong();
+			return;
+		}
+		$("#tinytuya_hint").attr("style", "color:green").html("<TMPL_VAR TINYTUYA.HINT_SAVE_OK>");
+		getconfig();
+	})
+	.always(function( data ) {
+		console.log( "savetinytuya Finished" );
+	});
+}
+
+// SecurePIN
+function checkSecurePIN() {
+	console.log("Checking SecurePin");
+	$("#check_securepin").attr("disabled", true);
+	$("#check_hint").attr("style", "color:blue;").html("<TMPL_VAR SECUREPIN.CHECK_WAIT>");
+	$.ajax({ 
+			type: 'POST',
+			data: { ajax: 'checksecpin', secpin: $('#securepin').val() }
+	})
+	.fail(function( data ) {
+		securePINwrong();
+		return;
+	})
+	.done(function( data ) {
+		if( data.error && data.error != 0 ) {
+			console.log( "Error detected", data.error );
+			data.message = '<TMPL_VAR SECUREPIN.ERROR_WRONG>';
+			console.log( "Message:", data.message );
+			$("#check_hint").attr("style", "color:red").html(data.message);
+			secpin = null;
+			return;
+		}
+		// Save PIN to session storage
+		sessionStorage.setItem("securePIN", $('#securepin').val());
+		secpin = $('#securepin').val();
+		$("#securepin_block").fadeOut();
+		// Get config data
+		getconfig();
+		// $("#main_form").fadeIn();
+		
+	})
+	.always(function( data ) {
+		console.log( "checksecpin Finished" );
+		$("#check_securepin").attr("disabled", false);
+	});
+}
+
+function securePINwrong() {
+	console.log( "checksecpin Fail");
+	$("#check_hint").attr("style", "color:red").html("<TMPL_VAR SECUREPIN.ERROR_GENERIC>");
+	$("#securepin_block").fadeIn();
+	$("#main").css( 'visibility', 'hidden' );
+	return;
+}
+
+// Restart Bridge
+function restartBridge() {
+	console.log ("Restart Bridge");
+	$("#bridgestate").attr("style", "color:blue").html("<TMPL_VAR COMMON.MSG_BRIDGE_REFRESH>");
+	nopidrefresh = "1";
+	$.ajax( {
+			type: 'POST',
+			data: {
+				ajax: 'restartbridge',
+				secpin: secpin
+			}
+		} )
+	.fail(function( data ) {
+		console.log( "Restart Bridge Fail", data );
+	})
+	.done(function( data ) {
+		console.log( "Restart Bridge Success: ", data );
+		update_pids();
+	})
+	.always(function( data ) {
+		console.log( "Restart Bridge Finished" );
+		nopidrefresh = "0";
+	});
+}
+
+// Stop Bridge
+function stopBridge() {
+	console.log ("Stop Bridge");
+	$.ajax( {
+			type: 'POST',
+			data: {
+				ajax: 'stopbridge',
+				secpin: secpin
+			}
+		} )
+	.fail(function( data ) {
+		console.log( "Stop Bridge Fail", data );
+	})
+	.done(function( data ) {
+		console.log( "Stop Bridge Success: ", data );
+		update_pids();
+	})
+	.always(function( data ) {
+		console.log( "Stop Bridge Finished" );
+	});
+}
+
+// Get Config
+function getconfig() {
+	// Get Config
+	
+	if ( formtinytuya ) {
+		console.log( "Get Config for TinyTuya form" );
+		var form = 'tinytuya'; // This will be changed to tinytuya.json later on in CGI
+	}
+	if ( formmqtt ) {
+		console.log( "Get Config for MQTT form" );
+		var form = 'pluginconfig'; // This will be changed to config.json later on in CGI
+	}
+	if ( formlog ) {
+		console.log( "Get Config for form not needed" );
+		$("#main").css( 'visibility', 'visible' );
+		$("#securepin_block").css( 'display', 'none' );
+		// No need to fetch config
+		return;
+	}
+		
+	if ( secpin != null ) {
+		// Ajax request
+		$.ajax({ 
+			type: 'POST',
+			data: { ajax: 'getconfig', config: form, secpin: secpin }
+		})
+		.fail(function( data ) {
+			console.log( "getconfig Fail", data );
+		})
+		.done(function( data ) {
+			console.log( "getconfig Success", data );
+			if(data.secpinerror) {
+				securePINwrong();
+				return;
+			}
+			$("#main").css( 'visibility', 'visible' );
+
+			if ( formmqtt ) {
+				console.log( "Parse Item for MQTT form" );
+				// Fill the form with json data retrieved from the ajax getconfig call
+				if ( data.error || jQuery.isEmptyObject(data)) {
+					console.log("pluginconfig.json is empty, does not exist or is invalid.");
+				}
+				if(data.topic) {
+					$("#topic").val(data.topic);
+				} else {
+					$("#topic").val('poolex');
+				}
+			};
+
+			if ( formtinytuya ) {
+				console.log( "Parse Item for TinyTuya form" );
+				// Fill the form with json data retrieved from the ajax getconfig call
+				if ( data.error || jQuery.isEmptyObject(data)) {
+					console.log("tinytuya.json is empty, does not exist or is invalid.");
+				}
+				if(data.apiKey) {
+					$("#apiKey").val(data.apiKey);
+				} else {
+					$("#lpiKey").val('');
+				}
+				if(data.apiSecret) {
+					$("#apiSecret").val(data.apiSecret);
+				} else {
+					$("#apiSecret").val('');
+				}
+				if(data.apiDeviceID) {
+					$("#apiDeviceID").val(data.apiDeviceID);
+				} else {
+					$("#apiDeviceID").val('');
+				}
+				if (data.type === "silverline") {
+					$("#type").val("silverline").change();
+				} else if (data.type === "qline") {
+					$("#type").val("qline").change();
+				} else if (data.type === "vertigo") {
+					$("#type").val("vertigo").change();
+				} 
+				if (data.apiRegion === "eu") {
+					$("#apiRegion").val("eu").change();
+				} else if (data.apiRegion === "eu-w") {
+					$("#apiRegion").val("eu-w").change();
+				} else if (data.apiRegion === "cn") {
+					$("#apiRegion").val("cn").change();
+				} else if (data.apiRegion === "us") {
+					$("#apiRegion").val("us").change();
+				} else if (data.apiRegion === "us-e") {
+					$("#apiRegion").val("us-e").change();
+				} else if (data.apiRegion === "in") {
+					$("#apiRegion").val("in").change();
+				} 
+				$(".TINYTUYA").removeClass("ui-state-disabled");
+			};
+		})
+		.always(function( data ) {
+			console.log( "getconfig Finished" );
+		})
+	}
+}
+</script>

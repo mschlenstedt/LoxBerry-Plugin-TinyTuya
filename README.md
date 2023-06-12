@@ -1,3 +1,2 @@
-# LoxBerry-Plugin-Tuya
-
-A LoxBerry Plugin: https://wiki.loxberry.de/start
+# LoxBerry-Plugin-Poolex
+LoxBerry Plugin for Poolex Heatpumps
