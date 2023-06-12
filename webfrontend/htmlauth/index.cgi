@@ -87,6 +87,14 @@ if( $q->{ajax} ) {
 		exit();
 	}
 
+	# GetPIDs
+	if( $q->{ajax} eq "getpids" ) {
+		LOGINF "P$$ getpids: getpids was called.";
+		pids();
+		$response{pids} = \%pids;
+		print JSON->new->canonical(1)->encode(\%response);
+	}
+
 	# All other requests need to send the SecPIN
 	if($ENV{REQUEST_METHOD}) {
 		LOGINF "P$$ Remote request - checking SecurePIN";
@@ -144,14 +152,6 @@ if( $q->{ajax} ) {
 			print $content;
 		}
 		print JSON->new->canonical(1)->encode(\%response) if !$content;
-	}
-
-	# GetPIDs
-	if( $q->{ajax} eq "getpids" ) {
-		LOGINF "P$$ getpids: getpids was called.";
-		pids();
-		$response{pids} = \%pids;
-		print JSON->new->canonical(1)->encode(\%response);
 	}
 
 	# Restart services
