@@ -60,7 +60,7 @@ else
 fi 
 
 echo "<INFO> Start installing Python TinyTuya..."
-yes | python3 -m pip install tinytuya
+yes | python3 -m pip install --upgrade tinytuya
 INSTALLED=$(pip3 list --format=columns | grep "tinytuya" | grep -v grep | wc -l)
 if [ ${INSTALLED} -ne "0" ]; then
 	echo "<OK> Python TinyTuya installed successfully."

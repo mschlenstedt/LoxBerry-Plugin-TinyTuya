@@ -48,12 +48,12 @@ git clone https://github.com/mschlenstedt/tinytuya -b mqtt
 
 echo "<INFO> Creating Symlinks"
 rm $PDATA/tinytuya/server/mqtt/mqtt.json
-ln -s $PDATA/tinytuya/server/server.py $PBIN/server.py
-ln -s $PDATA/tinytuya/server/mqtt/mqtt_gateway.py $PBIN/mqtt_gateway.py
-ln -s $PDATA/tinytuya/server/mqtt/mqtt.json $PCONFIG/mqtt.json
-ln -s $PDATA/tinytuya/server/devices.json $PCONFIG/devices.json
-ln -s $PDATA/tinytuya/server/tinytuya.json $PCONFIG/tinytuya.json
-ln -s $PDATA/tinytuya/server/snapshot.json $PCONFIG/snapshot.json
+ln -s $PBIN/server.py $PDATA/tinytuya/server/server.py 
+ln -s $PBIN/mqtt_gateway.py $PDATA/tinytuya/server/mqtt/mqtt_gateway.py
+ln -s $PCONFIG/mqtt.json $PDATA/tinytuya/server/mqtt/mqtt.json
+ln -s $PCONFIG/devices.json $PDATA/tinytuya/server/devices.json
+ln -s $PCONFIG/tinytuya.json $PDATA/tinytuya/server/tinytuya.json
+ln -s $PCONFIG/snapshot.json $PDATA/tinytuya/server/snapshot.json
 
 # Exit with Status 0
 exit 0
