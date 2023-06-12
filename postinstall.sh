@@ -44,14 +44,14 @@ PBIN=$LBPBIN/$PDIR
 
 echo "<INFO> Installing TinyTuya"
 cd $PDATA
-git clone https://github.com/mschlenstedt/tinytuya -b mqtt
+git clone https://github.com/mschlenstedt/tinytuya -b mqtt $PDATA
 
 echo "<INFO> Creating Symlinks"
-rm $PDATA/tinytuya/server/mqtt/mqtt.json
-ln -s $PCONFIG/mqtt.json $PDATA/tinytuya/server/mqtt/mqtt.json
-ln -s $PCONFIG/devices.json $PDATA/tinytuya/server/devices.json
-ln -s $PCONFIG/tinytuya.json $PDATA/tinytuya/server/tinytuya.json
-ln -s $PCONFIG/snapshot.json $PDATA/tinytuya/server/snapshot.json
+rm $PDATA/server/mqtt/mqtt.json
+ln -s $PCONFIG/mqtt.json $PDATA/server/mqtt/mqtt.json
+ln -s $PCONFIG/devices.json $PDATA/server/devices.json
+ln -s $PCONFIG/tinytuya.json $PDATA/server/tinytuya.json
+ln -s $PCONFIG/snapshot.json $PDATA/server/snapshot.json
 
 # Exit with Status 0
 exit 0
