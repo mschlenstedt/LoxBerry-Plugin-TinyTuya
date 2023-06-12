@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Shell script which is executed by bash *BEFORE* installation is started
-# (*BEFORE* preinstall and *BEFORE* preupdate). Use with caution and remember,
-# that all systems may be different!
-#
 # Exit code must be 0 if executed successfull. 
 # Exit code 1 gives a warning but continues installation.
 # Exit code 2 cancels installation.

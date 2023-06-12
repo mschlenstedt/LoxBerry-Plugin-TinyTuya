@@ -73,7 +73,7 @@
 			&nbsp; &nbsp; &nbsp; &nbsp;
 			<a href="javascript:restartBridge();" id="btnrestartbridge" data-role="button" data-inline="true" data-icon="refresh" data-mini="true"
 						data-transition="flow"><TMPL_VAR COMMON.BUTTON_RESTART></a>
-			<a href="javascript:stopBridge();" id="btnrestopbridge" data-role="button" data-inline="true" data-icon="delete" data-mini="true"
+			<a href="javascript:stopBridge();" id="btnstopbridge" data-role="button" data-inline="true" data-icon="delete" data-mini="true"
 						data-transition="flow"><TMPL_VAR COMMON.BUTTON_STOP></a>
 			</center>
 		</div>
@@ -157,27 +157,6 @@
 			<div	class="lb_flex-item-spacer"></div>
 		</div>
 
-		<div class="lb_flex-container TINYTUYA ui-state-disabled">
-			<div	class="lb_flex-item-label">
-				<label	class=	"control-label"
-					for="type"><TMPL_VAR TINYTUYA.LABEL_TYPE></label>
-			</div>
-			<div	class="lb_flex-item-spacer"></div>
-			<div	class="lb_flex-item">
-				<select name="typr" id="type">
-					<option value="silverline"><TMPL_VAR TINYTUYA.LABEL_SILVERLINE></option>
-					<option value="qline"><TMPL_VAR TINYTUYA.LABEL_QLINE></option>
-					<option value="vertigo"><TMPL_VAR TINYTUYA.LABEL_VERTIGO></option>
-					<option value="fairland"><TMPL_VAR TINYTUYA.LABEL_FAIRLAND></option>
-				</select>
-			</div>
-			<div	class="lb_flex-item-spacer"></div>
-			<div	class="lb_flex-item-help hint">
-				<TMPL_VAR TINYTUYA.HINT_TYPE>
-			</div>
-			<div	class="lb_flex-item-spacer"></div>
-		</div>
-
 		<div style="padding: 0px 0px 20px 0px;"></div>
 	
 		<div class="lb_flex-container TINYTUYA">
@@ -209,7 +188,7 @@
 		<div class="lb_flex-container MQTT">
 			<div	class="lb_flex-item-label">
 				<label	class=	"control-label"
-					for="topic"><TMPL_VAR MQTT.LABEL_MQTTTopic></label>
+					for="topic"><TMPL_VAR MQTT.LABEL_MQTTTOPIC></label>
 			</div>
 			<div	class="lb_flex-item-spacer"></div>
 			<div	class="lb_flex-item">
@@ -219,6 +198,23 @@
 			<div	class="lb_flex-item-spacer"></div>
 			<div	class="lb_flex-item-help hint">
 				<TMPL_VAR MQTT.HINT_MQTTTOPIC>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div class="lb_flex-container MQTT">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="pollingtime"><TMPL_VAR MQTT.LABEL_MQTTPOLLINGTIME></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<input width="100%" value="" id="pollingtime" name="pollingtime" type="text" class="textfield" 
+				data-validation-rule="special:numeric" data-validation-error-msg="<TMPL_VAR MQTT.MSG_VALINVALID_MQTTPOLLINGTIME>">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR MQTT.HINT_MQTTPOLLINGTIME>
 			</div>
 			<div	class="lb_flex-item-spacer"></div>
 		</div>
@@ -246,6 +242,7 @@
 		<script>
 			// Validation
 			validate_enable('#topic');
+			validate_enable('#pollingtime');
 		</script>
 	
 	</div>
@@ -335,6 +332,7 @@ function saveMQTT() {
 			data: { 
 				ajax: 'savemqtt', 
 				topic: $('#topic').val(),
+				pollingtime: $('#pollingtime').val(),
 				secpin: secpin
 			}
 		} )
@@ -367,7 +365,6 @@ function saveTINYTUYA() {
 				apiSecret: $('#apiSecret').val(),
 				apiRegion: $('#apiRegion').val(),
 				apiDeviceID: $('#apiDeviceID').val(),
-				type: $('#type').val(),
 				secpin: secpin
 			}
 		} )
@@ -491,7 +488,7 @@ function getconfig() {
 	}
 	if ( formmqtt ) {
 		console.log( "Get Config for MQTT form" );
-		var form = 'pluginconfig'; // This will be changed to config.json later on in CGI
+		var form = 'mqtt'; // This will be changed to config.json later on in CGI
 	}
 	if ( formlog ) {
 		console.log( "Get Config for form not needed" );
@@ -522,12 +519,17 @@ function getconfig() {
 				console.log( "Parse Item for MQTT form" );
 				// Fill the form with json data retrieved from the ajax getconfig call
 				if ( data.error || jQuery.isEmptyObject(data)) {
-					console.log("pluginconfig.json is empty, does not exist or is invalid.");
+					console.log("mqtt.json is empty, does not exist or is invalid.");
 				}
 				if(data.topic) {
 					$("#topic").val(data.topic);
 				} else {
-					$("#topic").val('poolex');
+					$("#topic").val('tinytuya');
+				}
+				if(data.pollingtime) {
+					$("#pollingtime").val(data.pollingtime);
+				} else {
+					$("#pollingtime").val('5');
 				}
 			};
 

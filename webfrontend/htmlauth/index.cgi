@@ -47,7 +47,7 @@ my $template;
 my %L;
 
 # Globals 
-my $CFGFILE = $lbpconfigdir . "/pluginconfig.json";
+my $CFGFILE = $lbpconfigdir . "/mqtt.json";
 my $TTCFGFILE = $lbpconfigdir . "/tinytuya.json";
 my %pids;
 my %versions;
@@ -184,8 +184,7 @@ if( $q->{ajax} ) {
 	#	loglevel => 7,
 	#	addtime => 1
 	#);
-
-	LOGSTART "Poolex WebIf";
+	#LOGSTART "TinyTuya WebIf";
 	
 	# Init Template
 	$template = HTML::Template->new(
@@ -260,12 +259,17 @@ sub form_print
 	$navbar{30}{URL} = 'index.cgi?form=mqtt';
 	$navbar{30}{active} = 1 if $q->{form} eq "mqtt";
 
+	$navbar{40}{Name} = "$L{'COMMON.LABEL_TINYTUYAWEBUI'}";
+	$navbar{40}{URL} = "http://$ENV{SERVER_NAME}:8888";
+	$navbar{40}{target} = "_blank";
+	$navbar{40}{active} = 1 if $q->{form} eq "tinytuyawebui";
+
 	$navbar{99}{Name} = "$L{'COMMON.LABEL_LOG'}";
 	$navbar{99}{URL} = 'index.cgi?form=log';
 	$navbar{99}{active} = 1 if $q->{form} eq "log";
 	
 	# Template
-	LoxBerry::Web::lbheader($L{'COMMON.LABEL_PLUGINTITLE'} . " V$version", "https://wiki.loxberry.de/plugins/poolex/start", "");
+	LoxBerry::Web::lbheader($L{'COMMON.LABEL_PLUGINTITLE'} . " V$version", "https://wiki.loxberry.de/plugins/tinytuya/start", "");
 	print $template->output();
 	LoxBerry::Web::lbfooter();
 	
@@ -306,15 +310,17 @@ sub savemqtt
 	my $jsonobj = LoxBerry::JSON->new();
 	my $cfg = $jsonobj->open(filename => $CFGFILE);
 	my $i = 0;
-	$q->{topic} = "poolex" if ( $q->{topic} eq "" ) ;
-	$cfg->{'topic'} = $q->{topic};
+	$q->{'topic'} = "tinytuya" if ( $q->{'topic'} eq "" ) ;
+	$q->{'pollingtime'} = 5 if ( $q->{'pollingtime'} eq "" ) ;
+	$cfg->{'topic'} = $q->{'topic'};
+	$cfg->{'pollingtime'} = $q->{'pollingtime'};
 	$jsonobj->write();
 	
 	# Save mqtt_subscriptions.cfg for MQTT Gateway
 	my $subscr_file = $lbpconfigdir."/mqtt_subscriptions.cfg";
 	eval {
 		open(my $fh, '>', $subscr_file);
-		print $fh $q->{topic} . "/#\n";
+		print $fh $q->{'topic'} . "/#\n";
 		close $fh;
 	};
 	if ($@) {
@@ -330,11 +336,10 @@ sub savetinytuya
 	# TuyaConfig
 	my $jsonobj = LoxBerry::JSON->new();
 	my $cfg = $jsonobj->open(filename => $TTCFGFILE);
-	$cfg->{apiKey} = $q->{apiKey};
-	$cfg->{apiSecret} = $q->{apiSecret};
-	$cfg->{apiRegion} = $q->{apiRegion};
-	$cfg->{apiDeviceID} = $q->{apiDeviceID};
-	$cfg->{type} = $q->{type};
+	$cfg->{'apiKey'} = $q->{'apiKey'};
+	$cfg->{'apiSecret'} = $q->{'apiSecret'};
+	$cfg->{'apiRegion'} = $q->{'apiRegion'};
+	$cfg->{'apiDeviceID'} = $q->{'apiDeviceID'};
 	$jsonobj->write();
 	eval {
 		system("$lbpbindir/wizard.sh >/dev/null 2>&1");
