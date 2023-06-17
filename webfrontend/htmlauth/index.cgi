@@ -248,6 +248,12 @@ sub form_log
 
 sub form_print
 {
+
+	# Load Config
+	my $jsonobj = LoxBerry::JSON->new();
+	my $cfg = $jsonobj->open(filename => $TTCFGFILE);
+	$cfg->{'serverPort'} = '8888' if !$cfg->{'serverPort'};
+	
 	# Navbar
 	our %navbar;
 
@@ -260,7 +266,7 @@ sub form_print
 	$navbar{30}{active} = 1 if $q->{form} eq "mqtt";
 
 	$navbar{40}{Name} = "$L{'COMMON.LABEL_TINYTUYAWEBUI'}";
-	$navbar{40}{URL} = "http://$ENV{SERVER_NAME}:8888";
+	$navbar{40}{URL} = "http://$ENV{SERVER_NAME}:" . $cfg->{'serverPort'};
 	$navbar{40}{target} = "_blank";
 	$navbar{40}{active} = 1 if $q->{form} eq "tinytuyawebui";
 
@@ -340,6 +346,7 @@ sub savetinytuya
 	$cfg->{'apiSecret'} = $q->{'apiSecret'};
 	$cfg->{'apiRegion'} = $q->{'apiRegion'};
 	$cfg->{'apiDeviceID'} = $q->{'apiDeviceID'};
+	$cfg->{'serverPort'} = $q->{'serverPort'};
 	$jsonobj->write();
 	eval {
 		system("$lbpbindir/wizard.sh >/dev/null 2>&1");

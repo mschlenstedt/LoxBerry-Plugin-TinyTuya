@@ -10,7 +10,7 @@ use strict;
 #use Data::Dumper;
 
 # Version of this script
-my $version = "0.9.0";
+my $version = "1.0.0";
 
 # Globals
 my $error;
@@ -115,6 +115,14 @@ sub start
 	$cfg->{password} = $mqttcred->{brokerpass};
 	$jsonobj->write();
 	execute( "chmod 0600 $lbpconfigdir/mqtt.json" );
+
+	# Configure Server Port
+	my $cfgfilett = $lbpconfigdir . "/tinytuya.json";
+	my $jsonobjtt = LoxBerry::JSON->new();
+	my $cfgtt = $jsonobjtt->open(filename => $cfgfilett);
+	system ("sed -i 's/^APIPORT = [[:digit:]]\\+\$/APIPORT = " . $cfgtt->{serverPort} . "/g' $lbpdatadir/server/server.py > /dev/null 2>&1");
+	system ("sed -i 's/^APIPORT = [[:digit:]]\\+\$/APIPORT = " . $cfgtt->{serverPort} . "/g' $lbpdatadir/server/mqtt/mqtt_gateway.py > /dev/null 2>&1");
+	#system ("sed -i 's#:[[:digit:]]\\+/#:" . $cfgtt->{serverPort} . "/#g' $lbpdatadir/server/web/*.html > /dev/null 2>&1");
 
 	# Logging for Bridge
 	# Create a logging object

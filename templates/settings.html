@@ -157,6 +157,23 @@
 			<div	class="lb_flex-item-spacer"></div>
 		</div>
 
+		<div class="lb_flex-container TINYTUYA ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<label	class=	"control-label"
+					for="serverPort"><TMPL_VAR TINYTUYA.LABEL_SERVERPORT></label>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<input width="100%" value="" id="serverPort" name="serverPort" type="text" class="textfield" 
+				data-validation-rule="special:numeric" data-validation-error-msg="<TMPL_VAR TINYTUYA.MSG_VALINVALID_SERVERPORT>">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_SERVERPORT>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
 		<div style="padding: 0px 0px 20px 0px;"></div>
 	
 		<div class="lb_flex-container TINYTUYA">
@@ -170,14 +187,20 @@
 			</div>
 			<div	class="lb_flex-item-spacer"></div>
 			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR TINYTUYA.HINT_SAVE_WARNING>
 			</div>
 			<div	class="lb_flex-item-spacer"></div>
 		</div>
 		
 		</form>
+
+		<script>
+			// Validation
+			validate_enable('#serverPort');
+		</script>
+
 	
 	</div>
-
 </TMPL_IF>
 
 <!-- ****************************************************************************************** -->
@@ -365,6 +388,7 @@ function saveTINYTUYA() {
 				apiSecret: $('#apiSecret').val(),
 				apiRegion: $('#apiRegion').val(),
 				apiDeviceID: $('#apiDeviceID').val(),
+				serverPort: $('#serverPort').val(),
 				secpin: secpin
 			}
 		} )
@@ -554,13 +578,11 @@ function getconfig() {
 				} else {
 					$("#apiDeviceID").val('');
 				}
-				if (data.type === "silverline") {
-					$("#type").val("silverline").change();
-				} else if (data.type === "qline") {
-					$("#type").val("qline").change();
-				} else if (data.type === "vertigo") {
-					$("#type").val("vertigo").change();
-				} 
+				if(data.serverPort) {
+					$("#serverPort").val(data.serverPort);
+				} else {
+					$("#serverPort").val('8888');
+				}
 				if (data.apiRegion === "eu") {
 					$("#apiRegion").val("eu").change();
 				} else if (data.apiRegion === "eu-w") {

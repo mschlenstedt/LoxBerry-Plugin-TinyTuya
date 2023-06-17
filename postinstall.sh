@@ -44,7 +44,8 @@ PBIN=$LBPBIN/$PDIR
 
 echo "<INFO> Installing TinyTuya"
 cd $PDATA
-git clone https://github.com/jasonacox/tinytuya.git $PDATA
+#git clone https://github.com/jasonacox/tinytuya.git $PDATA
+git clone https://github.com/mschlenstedt/tinytuya.git -b mqtt_bugfix $PDATA
 
 echo "<INFO> Creating Symlinks"
 rm $PDATA/server/mqtt/mqtt.json
