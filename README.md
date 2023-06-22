@@ -1,2 +1,2 @@
-# LoxBerry-Plugin-Poolex
-LoxBerry Plugin for Poolex Heatpumps
+# LoxBerry-Plugin-TinyTuya
+LoxBerry Plugin for Tuya WiFi smart devices using a LAN connection.
