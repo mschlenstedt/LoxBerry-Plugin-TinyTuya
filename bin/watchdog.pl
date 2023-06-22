@@ -229,6 +229,6 @@ sub check
 END {
 
 	LOGEND "This is the end - My only friend, the end...";
-	LoxBerry::System::unlock(lockfile => 'poolex-watchdog');
+	LoxBerry::System::unlock(lockfile => 'tinytuya-watchdog');
 
 }
