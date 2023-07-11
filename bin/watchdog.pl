@@ -10,7 +10,7 @@ use strict;
 #use Data::Dumper;
 
 # Version of this script
-my $version = "1.0.0";
+my $version = "1.0.1";
 
 # Globals
 my $error;
@@ -40,7 +40,7 @@ if ($verbose) {
 LOGSTART "Starting Watchdog";
 
 # Lock
-my $status = LoxBerry::System::lock(lockfile => 'tinytuya-watchdog', wait => 120);
+my $status = LoxBerry::System::lock(lockfile => 'tinytuya-watchdog', wait => 900);
 if ($status) {
     print "$status currently running - Quitting.";
     exit (1);
