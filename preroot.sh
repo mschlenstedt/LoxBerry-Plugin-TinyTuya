@@ -55,6 +55,17 @@ else
 	exit 2;
 fi 
 
+echo "<INFO> Start installing Python PyCrypto..."
+yes | python3 -m pip install pycrypto
+INSTALLED=$(pip3 list --format=columns | grep "pycrypto" | grep -v grep | wc -l)
+if [ ${INSTALLED} -ne "0" ]; then
+	echo "<OK> Python PyCrypto installed successfully."
+else
+	echo "<WARNING> Python PyCrypto installation failed! The plugin will not work without."
+	echo "<WARNING> Giving up."
+	exit 2;
+fi 
+
 echo "<INFO> Start installing Python TinyTuya..."
 yes | python3 -m pip install --upgrade tinytuya
 INSTALLED=$(pip3 list --format=columns | grep "tinytuya" | grep -v grep | wc -l)
