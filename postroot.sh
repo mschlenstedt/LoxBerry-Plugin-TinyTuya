@@ -55,26 +55,6 @@ else
 	exit 2;
 fi 
 
-echo "<INFO> Start installing Rust Toolchain..."
-curl https://sh.rustup.rs -sSf | sh -s -- -y
-source $HOME/.cargo/env
-if [ $? -ne "0" ]; then
-	echo "<WARNING> Rust Toolchain installation failed! There might be a problem compiling some Python Modules. We will continue anyway."
-else
-	echo "<OK> Rust Toolchain installed successfully."
-fi 
-
-echo "<INFO> Start installing Python Cryptography tools..."
-yes | pip3 install -U cryptography 
-INSTALLED=$(pip3 list --format=columns | grep "cryptography" | grep -v grep | wc -l)
-if [ ${INSTALLED} -ne "0" ]; then
-	echo "<OK> Python Cryptography tools installed successfully."
-else
-	echo "<WARNING> Python Cryptography tools installation failed! The plugin will not work without."
-	echo "<WARNING> Giving up."
-	exit 2;
-fi 
-
 echo "<INFO> Start installing Python PyCrypto..."
 yes | python3 -m pip install pycrypto
 INSTALLED=$(pip3 list --format=columns | grep "pycrypto" | grep -v grep | wc -l)
