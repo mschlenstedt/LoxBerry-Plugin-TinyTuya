@@ -120,8 +120,8 @@ sub start
 	my $cfgfilett = $lbpconfigdir . "/tinytuya.json";
 	my $jsonobjtt = LoxBerry::JSON->new();
 	my $cfgtt = $jsonobjtt->open(filename => $cfgfilett);
-	system ("sed -i 's/^APIPORT = [[:digit:]]\\+\$/APIPORT = " . $cfgtt->{serverPort} . "/g' $lbpdatadir/server/server.py > /dev/null 2>&1");
-	system ("sed -i 's/^APIPORT = [[:digit:]]\\+\$/APIPORT = " . $cfgtt->{serverPort} . "/g' $lbpdatadir/server/mqtt/mqtt_gateway.py > /dev/null 2>&1");
+	system ("sed -i 's/^APIPORT =.*\$/APIPORT = " . $cfgtt->{serverPort} . "/g' $lbpdatadir/server/server.py > /dev/null 2>&1");
+	system ("sed -i 's/^APIPORT =.*\$/APIPORT = " . $cfgtt->{serverPort} . "/g' $lbpdatadir/server/mqtt/mqtt_gateway.py > /dev/null 2>&1");
 	#system ("sed -i 's#:[[:digit:]]\\+/#:" . $cfgtt->{serverPort} . "/#g' $lbpdatadir/server/web/*.html > /dev/null 2>&1");
 
 	# Logging for Bridge
