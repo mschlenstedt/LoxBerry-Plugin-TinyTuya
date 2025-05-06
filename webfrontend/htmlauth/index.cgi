@@ -56,9 +56,6 @@ my %versions;
 # AJAX
 ##########################################################################
 
-# Prevent reading configs from others
-system("chmod 0600 $lbpconfigdir/*.json");
-
 if( $q->{ajax} ) {
 	
 	## Logging for ajax requests
@@ -93,6 +90,7 @@ if( $q->{ajax} ) {
 		pids();
 		$response{pids} = \%pids;
 		print JSON->new->canonical(1)->encode(\%response);
+		exit();
 	}
 
 	# All other requests need to send the SecPIN
@@ -173,7 +171,10 @@ if( $q->{ajax} ) {
 ##########################################################################
 
 } else {
-	
+
+	# Prevent reading configs from others
+	system("chmod 0600 $lbpconfigdir/*.json");
+
 	require LoxBerry::Web;
 	
 	## Logging for serverside webif requests
