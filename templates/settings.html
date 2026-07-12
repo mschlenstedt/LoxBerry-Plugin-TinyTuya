@@ -267,9 +267,71 @@
 			validate_enable('#topic');
 			validate_enable('#pollingtime');
 		</script>
-	
+
 	</div>
 
+</TMPL_IF>
+
+<!-- ****************************************************************************************** -->
+
+<TMPL_IF FORM_UPDATE>
+		<form>
+
+		<center>
+		<p><TMPL_VAR UPDATE.HINT_LIB></p>
+		</center>
+		<br>
+
+		<div class="lb_flex-container UPDATE ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<TMPL_VAR UPDATE.LABEL_CURRENT>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<span id="currentversion">...</span>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div class="lb_flex-container UPDATE ui-state-disabled">
+			<div	class="lb_flex-item-label">
+				<TMPL_VAR UPDATE.LABEL_AVAILABLE>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+				<span id="availableversion">...</span>
+				<div class="hint" id="version_hint">&nbsp;</div>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		<div style="padding: 0px 0px 20px 0px;"></div>
+
+		<div class="lb_flex-container UPDATE ui-state-disabled">
+			<div	class="lb_flex-item-label">
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item">
+			<a href="javascript:upgradeTinyTuya();" id="btnupgrade" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left ui-icon-check ui-state-disabled"
+					data-transition="flow" data-inline="true"><TMPL_VAR UPDATE.BUTTON_UPGRADE></a>
+			<div class="hint" id="upgrade_hint">&nbsp;</div>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+			<div	class="lb_flex-item-help hint">
+				<TMPL_VAR UPDATE.HINT_RESTART>
+			</div>
+			<div	class="lb_flex-item-spacer"></div>
+		</div>
+
+		</form>
+
+	</div>
 </TMPL_IF>
 
 <!-- ****************************************************************************************** -->
@@ -284,6 +346,7 @@
 // Main form
 var formmqtt = '<TMPL_VAR FORM_MQTT>';
 var formtinytuya = '<TMPL_VAR FORM_TINYTUYA>';
+var formupdate = '<TMPL_VAR FORM_UPDATE>';
 var formlog = '<TMPL_VAR FORM_LOG>';
 
 var secpin = null;
@@ -529,7 +592,15 @@ function getconfig() {
 		// No need to fetch config
 		return;
 	}
-		
+
+	if ( formupdate ) {
+		console.log( "Get versions for Update form" );
+		if ( secpin != null ) {
+			getversions();
+		}
+		return;
+	}
+
 	if ( secpin != null ) {
 		// Ajax request
 		$.ajax({ 
@@ -611,5 +682,78 @@ function getconfig() {
 			console.log( "getconfig Finished" );
 		})
 	}
+}
+
+// Get TinyTuya module versions
+function getversions() {
+	$("#currentversion").html("...");
+	$("#availableversion").html("...");
+	$.ajax({
+		type: 'POST',
+		data: { ajax: 'getversions', secpin: secpin }
+	})
+	.fail(function( data ) {
+		console.log( "getversions Fail", data );
+	})
+	.done(function( data ) {
+		console.log( "getversions Success", data );
+		if(data.secpinerror) {
+			securePINwrong();
+			return;
+		}
+		$("#main").css( 'visibility', 'visible' );
+		$("#securepin_block").css( 'display', 'none' );
+		$(".UPDATE").removeClass("ui-state-disabled");
+		$("#currentversion").html(data.versions.current ? data.versions.current : '<TMPL_VAR UPDATE.MSG_NOVERSION>');
+		$("#availableversion").html(data.versions.available ? data.versions.available : '<TMPL_VAR UPDATE.MSG_NOVERSION>');
+		if(data.versions.update_available == 1) {
+			$("#btnupgrade").removeClass("ui-state-disabled");
+			$("#version_hint").attr("style", "color:blue").html("<TMPL_VAR UPDATE.HINT_UPDATE_AVAILABLE>");
+		} else {
+			$("#btnupgrade").addClass("ui-state-disabled");
+			if(data.versions.current && data.versions.available) {
+				$("#version_hint").attr("style", "color:green").html("<TMPL_VAR UPDATE.HINT_UPTODATE>");
+			} else {
+				$("#version_hint").attr("style", "color:red").html("<TMPL_VAR UPDATE.HINT_NOVERSION>");
+			}
+		}
+	})
+	.always(function( data ) {
+		console.log( "getversions Finished" );
+	});
+}
+
+// Upgrade TinyTuya module
+function upgradeTinyTuya() {
+	if( $("#btnupgrade").hasClass("ui-state-disabled") ) {
+		return;
+	}
+	$(".UPDATE").addClass("ui-state-disabled");
+	$("#upgrade_hint").attr("style", "color:blue").html("<TMPL_VAR UPDATE.HINT_UPGRADING>");
+	$.ajax({
+		type: 'POST',
+		data: { ajax: 'upgradetinytuya', secpin: secpin }
+	})
+	.fail(function( data ) {
+		console.log( "upgradetinytuya Fail", data );
+		$(".UPDATE").removeClass("ui-state-disabled");
+		$("#upgrade_hint").attr("style", "color:red").html("<TMPL_VAR UPDATE.HINT_ERROR>: "+data.statusText);
+	})
+	.done(function( data ) {
+		console.log( "upgradetinytuya Success: ", data );
+		if(data.secpinerror) {
+			securePINwrong();
+			return;
+		}
+		if(data.error && data.error != 0) {
+			$("#upgrade_hint").attr("style", "color:red").html("<TMPL_VAR UPDATE.HINT_ERROR>");
+		} else {
+			$("#upgrade_hint").attr("style", "color:green").html("<TMPL_VAR UPDATE.HINT_OK>");
+		}
+		getversions();
+	})
+	.always(function( data ) {
+		console.log( "upgradetinytuya Finished" );
+	});
 }
 </script>
