@@ -298,7 +298,7 @@ $(function() {
 	}
 	if(secpin == null) {
 		console.log("SecurePIN is empty in session storage");
-		securePINwrong();
+		securePINask();
 	}
 
 	setInterval(function(){ update_pids(); }, 3000);
@@ -450,6 +450,14 @@ function checkSecurePIN() {
 function securePINwrong() {
 	console.log( "checksecpin Fail");
 	$("#check_hint").attr("style", "color:red").html("<TMPL_VAR SECUREPIN.ERROR_GENERIC>");
+	$("#securepin_block").fadeIn();
+	$("#main").css( 'visibility', 'hidden' );
+	return;
+}
+
+// Ask for the SecurePIN without showing an error (initial page load)
+function securePINask() {
+	$("#check_hint").html("");
 	$("#securepin_block").fadeIn();
 	$("#main").css( 'visibility', 'hidden' );
 	return;

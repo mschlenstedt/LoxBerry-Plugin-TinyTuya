@@ -62,7 +62,8 @@ if( $q->{ajax} ) {
 	$log = LoxBerry::Log->new (
 		name => 'AJAX',
 		filename => "$lbplogdir/ajax.log",
-		stderr => 1,
+		# Do NOT log to stderr here: with Apache mod_cgid the CGI's stderr is
+		# merged into the HTTP response and corrupts the JSON answers
 		loglevel => 7,
 		addtime => 1,
 		append => 1,
