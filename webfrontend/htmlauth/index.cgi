@@ -58,13 +58,6 @@ my %versions;
 
 if( $q->{ajax} ) {
 
-	# On this LoxBerry/Apache setup (mod_cgid) the CGI's STDERR is fed into
-	# the HTTP response. Any stray STDERR line then corrupts the JSON AJAX
-	# answers (and injects a bogus HTTP header), so the WebUI reports e.g.
-	# "Could not check your SecurePIN". Silence STDERR for the whole AJAX
-	# branch; normal logging still goes to ajax.log via LoxBerry::Log below.
-	open(STDERR, '>', '/dev/null');
-
 	## Logging for ajax requests
 	$log = LoxBerry::Log->new (
 		name => 'AJAX',
@@ -74,6 +67,15 @@ if( $q->{ajax} ) {
 		append => 1,
 		nosession => 1,
 	);
+	# IMPORTANT: LoxBerry::Log re-hydrates the stderr/stdout output flags from
+	# the persisted log session (SQLite logs_attr, keyed by the log filename).
+	# If this ajax.log session was ever created with stderr/stdout enabled, every
+	# later request gets those flags back - and since Apache serves the CGI's
+	# STDOUT as the HTTP response, the log lines then prepend to / corrupt the
+	# JSON answers (and inject a bogus HTTP header), so the WebUI reports e.g.
+	# "Could not check your SecurePIN". Force file-only logging for AJAX.
+	$log->stderr(0);
+	$log->stdout(0);
 	
 	LOGSTART "P$$ Ajax call: $q->{ajax}";
 	LOGDEB "P$$ Request method: " . $ENV{REQUEST_METHOD};
