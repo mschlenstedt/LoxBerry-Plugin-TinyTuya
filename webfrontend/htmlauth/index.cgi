@@ -165,6 +165,47 @@ if( $q->{ajax} ) {
 		print JSON->new->canonical(1)->encode(\%response);
 	}
 
+	# Get installed and available TinyTuya module versions
+	if( $q->{ajax} eq "getversions" ) {
+		LOGINF "P$$ getversions: getversions was called.";
+		my (undef, $current) = LoxBerry::System::execute("$lbpbindir/upgrade.sh current 2>/dev/null");
+		my (undef, $available) = LoxBerry::System::execute("$lbpbindir/upgrade.sh available 2>/dev/null");
+		$current = LoxBerry::System::trim($current // "");
+		$available = LoxBerry::System::trim($available // "");
+		my $update_available = 0;
+		if( $current ne "" && $available ne "" ) {
+			eval {
+				require version;
+				$update_available = 1 if( version->parse("v" . $current) < version->parse("v" . $available) );
+			};
+			if( $@ ) {
+				LOGERR "P$$ getversions: Could not compare versions: $@";
+			}
+		}
+		LOGINF "P$$ getversions: current=$current available=$available update_available=$update_available";
+		$response{versions} = {
+			current => $current,
+			available => $available,
+			update_available => $update_available,
+		};
+		print JSON->new->canonical(1)->encode(\%response);
+	}
+
+	# Upgrade TinyTuya python module
+	if( $q->{ajax} eq "upgradetinytuya" ) {
+		LOGINF "P$$ upgradetinytuya: upgradetinytuya was called.";
+		my ($exitcode, $output) = LoxBerry::System::execute("sudo $lbpbindir/upgrade.sh </dev/null 2>&1");
+		if( !defined $exitcode || $exitcode != 0 ) {
+			LOGERR "P$$ upgradetinytuya: upgrade.sh failed with exitcode " . ($exitcode // "undef");
+			$response{error} = 1;
+			$response{message} = "Upgrade failed";
+		} else {
+			LOGINF "P$$ upgradetinytuya: upgrade finished successfully.";
+			$response{error} = 0;
+		}
+		print JSON->new->canonical(1)->encode(\%response);
+	}
+
 	exit;
 
 ##########################################################################
@@ -202,6 +243,7 @@ if( $q->{ajax} ) {
 
 	if ($q->{form} eq "tinytuya") { &form_tinytuya() }
 	elsif ($q->{form} eq "mqtt") { &form_mqtt() }
+	elsif ($q->{form} eq "update") { &form_update() }
 	elsif ($q->{form} eq "log") { &form_log() }
 
 	# Print the form
@@ -229,6 +271,17 @@ sub form_tinytuya
 sub form_mqtt
 {
 	$template->param("FORM_MQTT", 1);
+	return();
+}
+
+
+##########################################################################
+# Form: Update
+##########################################################################
+
+sub form_update
+{
+	$template->param("FORM_UPDATE", 1);
 	return();
 }
 
@@ -271,6 +324,10 @@ sub form_print
 	$navbar{40}{URL} = "http://$ENV{SERVER_NAME}:" . $cfg->{'serverPort'};
 	$navbar{40}{target} = "_blank";
 	$navbar{40}{active} = 1 if $q->{form} eq "tinytuyawebui";
+
+	$navbar{50}{Name} = "$L{'COMMON.LABEL_UPDATE'}";
+	$navbar{50}{URL} = 'index.cgi?form=update';
+	$navbar{50}{active} = 1 if $q->{form} eq "update";
 
 	$navbar{99}{Name} = "$L{'COMMON.LABEL_LOG'}";
 	$navbar{99}{URL} = 'index.cgi?form=log';
