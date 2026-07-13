@@ -203,8 +203,9 @@ sub check
 	}
 
 	my ($exitcode, $output)  = execute ("pgrep -f $lbpdatadir/server/mqtt/mqtt_gateway.py");
-	if ($exitcode != 0) {
-		LOGWARN "Bridge seems to be dead - Error $exitcode";
+	my ($exitcodeweb, $outputweb)  = execute ("pgrep -f $lbpdatadir/server/server.py");
+	if ($exitcode != 0 || $exitcodeweb != 0) {
+		LOGWARN "Bridge (exitcode $exitcode) and/or Webserver (exitcode $exitcodeweb) seems to be dead";
 		my $fails = LoxBerry::System::read_file("/dev/shm/tinytuya-watchdog-fails.dat");
 		chomp ($fails);
 		$fails++;

@@ -1,0 +1,7 @@
+# Plugin runs on LoxBerry (Linux) - all text files must keep LF.
+# CRLF breaks shell scripts, Perl CGIs and the shebang lines.
+* text=auto eol=lf
+
+# Binary files
+*.png binary
+*.zip binary
